@@ -33,7 +33,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "unbuild",
     "dev": "vitest",
     "test": "vitest --run",
     "lint": "eslint .",
