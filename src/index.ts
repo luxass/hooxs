@@ -12,7 +12,7 @@ export type InferHook<THooks, THook extends keyof THooks> = THooks[THook] extend
 
 export interface Hooxs<THooks extends Hooks> {
   call<THook extends keyof THooks>(hook: StringKey<THook>, ...args: Parameters<InferHook<THooks, THook>>): void
-  register<THook extends keyof THooks>(hook: StringKey<THook>, fn: InferHook<THooks, THook>): () => void
+  register<THook extends keyof THooks>(hook: StringKey<THook>, fn?: InferHook<THooks, THook>): () => void
   unregister<THook extends keyof THooks>(hook: StringKey<THook>, fn?: InferHook<THooks, THook>): void
   unregisterAll(): void
   before: (fn: (hook: keyof THooks) => void) => () => void
