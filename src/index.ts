@@ -4,22 +4,24 @@ export interface Hooks {
   [key: string]: HookFn
 }
 
+type StringKey<T> = T & string;
+
 export type InferHook<THooks, THook extends keyof THooks> = THooks[THook] extends HookFn
   ? THooks[THook]
   : THooks[THook] extends HookFn | undefined ? THooks[THook] : never;
 
 export interface Hooxs<THooks extends Hooks> {
-  call<THook extends keyof THooks>(hook: THook, ...args: Parameters<InferHook<THooks, THook>>): void
-  register<THook extends keyof THooks>(hook: THook, fn: InferHook<THooks, THook>): () => void
-  unregister(hook: keyof THooks, fn: any): void
-  unregisterAll(hook: keyof THooks): void
+  call<THook extends keyof THooks>(hook: StringKey<THook>, ...args: Parameters<InferHook<THooks, THook>>): void
+  register<THook extends keyof THooks>(hook: StringKey<THook>, fn?: InferHook<THooks, THook>): () => void
+  unregister<THook extends keyof THooks>(hook: StringKey<THook>, fn?: InferHook<THooks, THook>): void
+  unregisterAll(): void
   before: (fn: (hook: keyof THooks) => void) => () => void
   after: (fn: (hook: keyof THooks) => void) => () => void
 
   hooks: Map<keyof THooks, HookFn[]>
 }
 
-export function createHooks<THooks extends Record<string, any> = Record<string, HookFn>>(hooks?: THooks): Hooxs<THooks> {
+export function createHooks<THooks extends Record<string, any>>(hooks?: THooks): Hooxs<THooks> {
   const registered: Map<string, HookFn[]> = new Map();
 
   if (hooks) {
@@ -28,23 +30,23 @@ export function createHooks<THooks extends Record<string, any> = Record<string, 
     });
   }
 
-  const beforeHooks: ((hook: keyof THooks) => void)[] = [];
-  const afterHooks: ((hook: keyof THooks) => void)[] = [];
+  const beforeHooks: Set<HookFn> = new Set();
+  const afterHooks: Set<HookFn> = new Set();
 
   return {
     call(hook, ...args) {
-      if (beforeHooks.length) {
+      if (beforeHooks.size) {
         beforeHooks.forEach((fn) => fn(hook));
-      }
-
-      if (afterHooks.length) {
-        afterHooks.forEach((fn) => fn(hook));
       }
 
       const hooks = registered.get(hook);
 
       if (hooks) {
         hooks.forEach((fn) => fn(...args));
+      }
+
+      if (afterHooks.size) {
+        afterHooks.forEach((fn) => fn(hook));
       }
     },
     register(hook, fn) {
@@ -64,34 +66,34 @@ export function createHooks<THooks extends Record<string, any> = Record<string, 
     },
     unregister(hook, fn) {
       const hooks = registered.get(hook);
-      if (hooks) {
-        const index = hooks.indexOf(fn);
-        if (index !== -1) {
-          hooks.splice(index, 1);
-        }
+
+      if (!hooks) return;
+
+      if (!fn) {
+        registered.delete(hook);
+        return;
+      }
+
+      const specificHook = hooks.find((h) => h === fn);
+      if (specificHook) {
+        hooks.splice(hooks.indexOf(specificHook), 1);
       }
     },
-    unregisterAll(hook) {
-      registered.delete(hook);
+    unregisterAll() {
+
     },
     before(hookFn) {
-      beforeHooks.push(hookFn);
+      beforeHooks.add(hookFn);
 
       return () => {
-        const index = beforeHooks.indexOf(hookFn);
-        if (index !== -1) {
-          beforeHooks.splice(index, 1);
-        }
+        beforeHooks.delete(hookFn);
       };
     },
     after(hookFn) {
-      afterHooks.push(hookFn);
+      afterHooks.add(hookFn);
 
       return () => {
-        const index = afterHooks.indexOf(hookFn);
-        if (index !== -1) {
-          afterHooks.splice(index, 1);
-        }
+        afterHooks.delete(hookFn);
       };
     },
     hooks: registered,
