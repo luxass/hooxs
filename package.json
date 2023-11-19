@@ -2,7 +2,7 @@
   "name": "hooxs",
   "type": "module",
   "version": "0.1.0",
-  "packageManager": "pnpm@8.7.1",
+  "packageManager": "pnpm@8.10.5",
   "description": "Add a hooks based plugin system to your application",
   "author": {
     "name": "Lucas Nørgård",
