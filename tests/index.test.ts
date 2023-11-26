@@ -1,13 +1,7 @@
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { createHooks } from "../src";
 
-let noop = () => {};
-
-beforeEach(() => {
-  noop = vi.fn();
-});
-
-test("should return object of hook functions", () => {
+it("should return object of hook functions", () => {
   const hook = createHooks();
 
   expect(hook.hooks).toBeInstanceOf(Map);
@@ -19,7 +13,7 @@ test("should return object of hook functions", () => {
   expect(hook.before).toBeInstanceOf(Function);
 });
 
-test("should register hook", () => {
+it("should register hook", () => {
   const hook = createHooks();
 
   const hookFn = () => {};
@@ -40,8 +34,59 @@ test("should register hook", () => {
   ]);
 });
 
+it("should call hooks", () => {
+  const hook = createHooks();
+  const hookFn = vi.fn();
+
+  hook.register("test:hook", hookFn);
+  hook.call("test:hook");
+
+  expect(hookFn).toHaveBeenCalled();
+});
+
+it("should unregister hook", () => {
+  const hook = createHooks();
+  const hookFn = vi.fn();
+
+  hook.register("test:hook", hookFn);
+  hook.unregister("test:hook", hookFn);
+
+  expect(hook.hooks.get("test:hook")).toBeUndefined();
+});
+
+it("should unregister all hooks", () => {
+  const hook = createHooks();
+  const hookFn = vi.fn();
+
+  hook.register("test:hook", hookFn);
+  hook.register("test:hook2", hookFn);
+  hook.unregisterAll();
+
+  expect(hook.hooks.size).toBe(0);
+});
+
+it("should call before hooks", () => {
+  const hook = createHooks();
+  const beforeHookFn = vi.fn();
+
+  hook.before(beforeHookFn);
+  hook.call("test:hook");
+
+  expect(beforeHookFn).toHaveBeenCalled();
+});
+
+it("should call after hooks", () => {
+  const hook = createHooks();
+  const afterHookFn = vi.fn();
+
+  hook.after(afterHookFn);
+  hook.call("test:hook");
+
+  expect(afterHookFn).toHaveBeenCalled();
+});
+
 describe("should ignore hooks", () => {
-  test("should ignore empty hook name", () => {
+  it("should ignore empty hook name", () => {
     const hooks = createHooks();
     hooks.register("", () => {});
     // @ts-expect-error - just for typescript to feel good.
@@ -57,7 +102,7 @@ describe("should ignore hooks", () => {
     expect(hooks.hooks.get(0)).toBeUndefined();
   });
 
-  test("should ignore non-function hook", () => {
+  it("should ignore non-function hook", () => {
     const hooks = createHooks();
     hooks.register("test:hook", "");
     hooks.register("test:hook");

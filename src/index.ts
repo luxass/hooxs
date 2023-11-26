@@ -77,10 +77,13 @@ export function createHooks<THooks extends Record<string, any>>(hooks?: THooks):
       const specificHook = hooks.find((h) => h === fn);
       if (specificHook) {
         hooks.splice(hooks.indexOf(specificHook), 1);
+        if (hooks.length === 0) {
+          registered.delete(hook);
+        }
       }
     },
     unregisterAll() {
-
+      registered.clear();
     },
     before(hookFn) {
       beforeHooks.add(hookFn);
