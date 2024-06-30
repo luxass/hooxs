@@ -1,0 +1,16 @@
+{
+  "name": "@luxass/hooxs",
+  "version": "1.0.0",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "exclude": [
+    "tsup.config.ts",
+    "eslint.config.js",
+    "pnpm-lock.yaml",
+    "tests",
+    ".github/**",
+    ".nvmrc",
+    "tsconfig.json"
+  ]
+}
