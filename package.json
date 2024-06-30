@@ -13,7 +13,7 @@
   "homepage": "https://github.com/luxass/hooxs",
   "repository": {
     "type": "git",
-    "url": "https://github.com/luxass/hooxs"
+    "url": "git+https://github.com/luxass/hooxs.git"
   },
   "bugs": {
     "url": "https://github.com/luxass/hooxs/issues"
