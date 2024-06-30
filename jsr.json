@@ -11,6 +11,7 @@
     "tests",
     ".github/**",
     ".nvmrc",
-    "tsconfig.json"
+    "tsconfig.json",
+    "playground.ts"
   ]
 }
