@@ -17,10 +17,10 @@ npm install hooxs
 import { createHooks } from "hooxs";
 
 interface RuntimeHooks {
-  "build:before": () => void
-  "build:after": (files: string[]) => void
+  "build:before": () => void;
+  "build:after": (files: string[]) => void;
   // can either be registered inside the hooks object or registered at a later point
-  "config:load"?: (config: Record<string, unknown>) => void
+  "config:load"?: (config: Record<string, unknown>) => void;
 }
 
 const hooks = createHooks<RuntimeHooks>({

@@ -3,9 +3,9 @@ import {
 } from "./src";
 
 interface RuntimeHooks {
-  "build:before": () => void
-  "build:after": (files: string[]) => void
-  "config:load"?: (config: Record<string, unknown>) => void
+  "build:before": () => void;
+  "build:after": (files: string[]) => void;
+  "config:load"?: (config: Record<string, unknown>) => void;
 }
 
 const hooks = createHooks<RuntimeHooks>({

@@ -1,7 +1,7 @@
 export type HookFn = (...args: any) => Promise<void> | void;
 
 export interface Hooks {
-  [key: string]: HookFn
+  [key: string]: HookFn;
 }
 
 type StringKey<T> = T & string;
@@ -11,14 +11,14 @@ export type InferHook<THooks, THook extends keyof THooks> = THooks[THook] extend
   : THooks[THook] extends HookFn | undefined ? THooks[THook] : never;
 
 export interface Hooxs<THooks extends Hooks> {
-  call<THook extends keyof THooks>(hook: StringKey<THook>, ...args: Parameters<InferHook<THooks, THook>>): void
-  register<THook extends keyof THooks>(hook: StringKey<THook>, fn?: InferHook<THooks, THook>): () => void
-  unregister<THook extends keyof THooks>(hook: StringKey<THook>, fn?: InferHook<THooks, THook>): void
-  unregisterAll(): void
-  before: (fn: (hook: keyof THooks) => void) => () => void
-  after: (fn: (hook: keyof THooks) => void) => () => void
+  call: <THook extends keyof THooks>(hook: StringKey<THook>, ...args: Parameters<InferHook<THooks, THook>>) => void;
+  register: <THook extends keyof THooks>(hook: StringKey<THook>, fn?: InferHook<THooks, THook>) => () => void;
+  unregister: <THook extends keyof THooks>(hook: StringKey<THook>, fn?: InferHook<THooks, THook>) => void;
+  unregisterAll: () => void;
+  before: (fn: (hook: keyof THooks) => void) => () => void;
+  after: (fn: (hook: keyof THooks) => void) => () => void;
 
-  hooks: Map<keyof THooks, HookFn[]>
+  hooks: Map<keyof THooks, HookFn[]>;
 }
 
 export function createHooks<THooks extends Record<string, any>>(hooks?: THooks): Hooxs<THooks> {
