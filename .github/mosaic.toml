@@ -5,7 +5,7 @@
 # schema can be found here: https://mosaic.luxass.dev/json-schema.json
 
 [project]
-name = ""
+name = "hooxs"
 version = true
 
 [npm]
