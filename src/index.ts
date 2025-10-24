@@ -1,4 +1,4 @@
-import type { HookFn, Hooks, Hooxs, InferHook, StringKey } from "./types.js";
+import type { HookFn, Hooks, Hooxs, InferHook, StringKey } from "./types";
 
 export type {
   HookFn,
@@ -21,24 +21,51 @@ export function createHooks<THooks extends Record<string, any>>(hooks?: THooks):
   const afterHooks: Set<HookFn> = new Set();
 
   return {
-    call(hook, ...args) {
+    async call(hook, ...args) {
       if (beforeHooks.size) {
         beforeHooks.forEach((fn) => fn(hook));
       }
 
-      const hooks = registered.get(hook);
+      // get registered hooks for this event
+      const hooks = registered.get(hook as string);
+      if (!hooks || hooks.length === 0) {
+        // no hooks to run, just run after hooks
+        if (afterHooks.size) {
+          afterHooks.forEach((fn) => fn(hook));
+        }
 
-      if (hooks) {
-        hooks.forEach((fn) => fn(...args));
+        return Promise.resolve();
       }
 
-      if (afterHooks.size) {
-        afterHooks.forEach((fn) => fn(hook));
+      // create task for Chrome DevTools debugging
+      // https://developer.chrome.com/blog/devtools-modern-web-debugging/#linked-stack-traces
+      // @ts-expect-error - console.createTask is a Chrome-only feature
+      // eslint-disable-next-line no-console
+      const task = typeof console !== "undefined" && console.createTask !== undefined
+        // @ts-expect-error - console.createTask is a Chrome-only feature
+        // eslint-disable-next-line no-console
+        ? console.createTask(hook as string)
+        : { run: (fn: () => any) => fn() };
+
+      // execute hooks serially using Promise.reduce
+      const result = hooks.reduce(
+        (promise, hookFn) =>
+          promise.then(() => task.run(() => hookFn(...args))),
+        Promise.resolve(),
+      );
+
+      // run after hooks when done
+      try {
+        return await result;
+      } finally {
+        if (afterHooks.size) {
+          afterHooks.forEach((fn) => fn(hook));
+        }
       }
     },
     register(hook, fn) {
       if (!hook || typeof fn !== "function") {
-        return () => {};
+        return () => { };
       }
 
       const hooks = registered.get(hook);
