@@ -1,25 +1,6 @@
-export type HookFn = (...args: any) => Promise<void> | void;
+import type { HookFn, Hooks, Hooxs, InferHook, StringKey } from "./types.js";
 
-export interface Hooks {
-  [key: string]: HookFn;
-}
-
-type StringKey<T> = T & string;
-
-export type InferHook<THooks, THook extends keyof THooks> = THooks[THook] extends HookFn
-  ? THooks[THook]
-  : THooks[THook] extends HookFn | undefined ? THooks[THook] : never;
-
-export interface Hooxs<THooks extends Hooks> {
-  call: <THook extends keyof THooks>(hook: StringKey<THook>, ...args: Parameters<InferHook<THooks, THook>>) => void;
-  register: <THook extends keyof THooks>(hook: StringKey<THook>, fn?: InferHook<THooks, THook>) => () => void;
-  unregister: <THook extends keyof THooks>(hook: StringKey<THook>, fn?: InferHook<THooks, THook>) => void;
-  unregisterAll: () => void;
-  before: (fn: (hook: keyof THooks) => void) => () => void;
-  after: (fn: (hook: keyof THooks) => void) => () => void;
-
-  hooks: Map<keyof THooks, HookFn[]>;
-}
+export type { HookFn, Hooks, Hooxs, InferHook, StringKey };
 
 export function createHooks<THooks extends Record<string, any>>(hooks?: THooks): Hooxs<THooks> {
   const registered: Map<string, HookFn[]> = new Map();
