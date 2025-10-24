@@ -1,6 +1,12 @@
 import type { HookFn, Hooks, Hooxs, InferHook, StringKey } from "./types.js";
 
-export type { HookFn, Hooks, Hooxs, InferHook, StringKey };
+export type {
+  HookFn,
+  Hooks,
+  Hooxs,
+  InferHook,
+  StringKey,
+};
 
 export function createHooks<THooks extends Record<string, any>>(hooks?: THooks): Hooxs<THooks> {
   const registered: Map<string, HookFn[]> = new Map();
