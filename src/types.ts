@@ -35,7 +35,7 @@ export interface Hooxs<THooks extends Hooks> {
   call: <THook extends keyof THooks>(
     hook: StringKey<THook>,
     ...args: Parameters<InferHook<THooks, THook>>
-  ) => void;
+  ) => Promise<any>;
 
   /**
    * Register a hook function and return an unregister function
@@ -71,5 +71,5 @@ export interface Hooxs<THooks extends Hooks> {
   /**
    * The internal map of registered hooks
    */
-  hooks: Map<keyof THooks, HookFn[]>;
+  hooks: ReadonlyMap<StringKey<keyof THooks>, HookFn[]>;
 }
