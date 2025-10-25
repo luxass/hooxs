@@ -34,7 +34,7 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
-    "test": "vitest --run",
+    "test": "vitest --run --typecheck",
     "test:watch": "vitest",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"
