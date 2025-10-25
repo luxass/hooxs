@@ -54,14 +54,19 @@ export function createHooks<THooks extends Record<string, any>>(hooks?: THooks):
         Promise.resolve(),
       );
 
-      // run after hooks when done
-      try {
-        return await result;
-      } finally {
-        if (afterHooks.size) {
-          afterHooks.forEach((fn) => fn(hook));
-        }
+      if ((result as any) instanceof Promise) {
+        return result.finally(() => {
+          if (afterHooks.size) {
+            afterHooks.forEach((fn) => fn(hook));
+          }
+        });
       }
+
+      if (afterHooks.size) {
+        afterHooks.forEach((fn) => fn(hook));
+      }
+
+      return result;
     },
     register(hook, fn) {
       if (!hook || typeof fn !== "function") {
