@@ -47,7 +47,7 @@ export function createHooks<THooks extends Record<string, any>>(hooks?: THooks):
         ? console.createTask(hook as string)
         : { run: (fn: () => any) => fn() };
 
-      // execute hooks serially using Promise.reduce
+      // execute hooks serially using reduce
       const result = hooks.reduce(
         (promise, hookFn) =>
           promise.then(() => task.run(() => hookFn(...args))),

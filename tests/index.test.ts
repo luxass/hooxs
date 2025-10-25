@@ -230,9 +230,8 @@ describe("hooxs", () => {
         results.push("data-fetched");
       });
 
-      hooks.call("fetch:data");
+      await hooks.call("fetch:data");
 
-      await new Promise((resolve) => setTimeout(resolve, 20));
       expect(results).toContain("data-fetched");
     });
 
@@ -248,9 +247,8 @@ describe("hooxs", () => {
 
       hooks.register("process", () => order.push("sync-2"));
 
-      hooks.call("process");
+      await hooks.call("process");
 
-      await new Promise((resolve) => setTimeout(resolve, 10));
       expect(order).toEqual(["sync-1", "async", "sync-2"]);
     });
   });
@@ -366,7 +364,7 @@ describe("hooxs", () => {
     it("should handle calling non-existent hooks gracefully", async () => {
       const hooks = createHooks();
 
-      await expect(hooks.call("doesnt:exist")).resolves.not.toThrow();
+      await expect(hooks.call("doesnt:exist")).resolves.toBeUndefined();
     });
 
     it("should continue executing hooks even if before/after are not registered", async () => {
