@@ -71,5 +71,5 @@ export interface Hooxs<THooks extends Hooks> {
   /**
    * The internal map of registered hooks
    */
-  hooks: Map<keyof THooks, HookFn[]>;
+  hooks: ReadonlyMap<StringKey<keyof THooks>, HookFn[]>;
 }

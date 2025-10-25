@@ -182,7 +182,7 @@ describe("hooxs interface", () => {
         "build:after": (_result: string) => { },
       });
 
-      expectTypeOf(hooks.hooks).toEqualTypeOf<Map<"build:before" | "build:after", HookFn[]>>();
+      expectTypeOf(hooks.hooks).toEqualTypeOf<ReadonlyMap<"build:before" | "build:after", HookFn[]>>();
     });
   });
 });
