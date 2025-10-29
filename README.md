@@ -3,6 +3,9 @@
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 
+> [IMPORTANT]
+> This project is deprecated in favor of [hookable](https://github.com/unjs/hookable).
+
 Effortlessly empower your project with typed hooks, enabling you to easily construct a plugin API for your needs.
 
 ## 📦 Installation
